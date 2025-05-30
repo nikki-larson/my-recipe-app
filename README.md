@@ -9,7 +9,7 @@
 
 
 ✨ <b>Features</b>
-- <u>Weekly Recipe Suggestions:</u> Get random, healthy dinner recipe ideas for each day of the week, pulling from your curated list of favorites. Easily swap out any suggested dinner for a preferred custom recipe on any day of the week if you want to try something new
+<U> - Weekly Recipe Suggestions:</U> Get random, healthy dinner recipe ideas for each day of the week, pulling from your curated list of favorites. Easily swap out any suggested dinner for a preferred custom recipe on any day of the week if you want to try something new
 - <u>Smart Grocery List Generation:</u> Creates a comprehensive shopping list of all needed ingredients from your selected recipes, staples we know we need each week, and the option to add additional items (by the way, we're out of paper towels 😂). List will be categorized by store sections (Produce, Refrigerated, Pantry, Other) to streamline our shopping trip.
 - <u>Interactive Item Removal:</u> Click to remove items from the displayed grocery list (e.g., if you already have them at home or have put them in your cart at the store).
 
