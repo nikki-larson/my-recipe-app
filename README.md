@@ -1,11 +1,12 @@
 <b>My Weekly Recipe & Grocery List Planner</b>
 
+<b>Problem to Solve</b> Dani and I alternate weeks where 1 person plans meals, grocery shops, and cooks (the other person cleans). So every 2 weeks, I end up having to spend 30-40 minutes finding recipes to make, seeing if we have the ingredients, and then making a grocery list. I wanted to get that down to 10 minutes.
 
-_What is it?_ This simple web application helps us quickly choose recipes for dinner on weeknights and build a comprehensive grocery list, including all the ingredients needed plus any ad-hoc items we need
+<b>What is this?</b> This simple web application helps us quickly choose recipes for dinner on weeknights and build a comprehensive grocery list, including all the ingredients needed plus any ad-hoc items we need
 
-_What it does:_ Searches for and suggests healthy recipes each week from our regular rotation of dinners, generates a categorized grocery list, and allows for customization (say we need more paper towels).
+<b>What does it do?</b> Searches for and suggests healthy recipes each week from our regular rotation of dinners, generates a categorized grocery list, and allows for customization (say we need more paper towels).
 
-_Problem it solves:_ Dani and I alternate weeks where 1 person plans meals, grocery shops, and cooks (the other person cleans). So every 2 weeks, I end up having to spend 30-40 minutes finding recipes to make, seeing if we have the ingredients, and then making a grocery list. I wanted to get that down to 10 minutes.
+
 
 ✨ <b>Features</b>
 - Weekly Recipe Suggestions: Get random, healthy dinner recipe ideas for each day of the week, pulling from your curated list of favorites.
