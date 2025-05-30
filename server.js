@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const port = 3000;
+const port = process.env.PORT || 3000; // Use Render's port or default to 3000 locally
 
 const healthyRecipes = [
     { id: 11, name: 'Chickpea Masala', ingredients: ['Unsalted butter', 'yellow onion', 'kosher salt', 'tomato paste', 'serrano chile', 'ginger', 'chickpeas', 'baking soda', 'garam masala', 'ground cumin', 'Kashmiri chili powder', 'heavy cream', 'dried fenugreek leaves', 'fresh cilantro', 'jasmine rice', 'naan'], link: 'https://www.delish.com/cooking/a45877598/indian-butter-chickpeas-recipe/' },
