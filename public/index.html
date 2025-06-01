@@ -4,27 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weekly Healthy Dinner Ideas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: sans-serif;
+            font-family: 'Libre Franklin', sans-serif;
             margin: 40px;
-            background-color: #f4f4f4;
+            background-color: #40B5AD; /* Verdigris background */
             color: #333;
             line-height: 1.6;
         }
         h1 {
-            color: #007bff;
+            color: #1a2b4d; /* Navy blue for H1 */
             text-align: center;
             margin-bottom: 30px;
         }
         h2 {
-            color: #28a745;
+            color: #1a2b4d; /* Navy blue for H2s (main section titles) */
             margin-top: 30px;
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
         }
-        h3 { /* Added for section heading */
-            color: #6610f2;
+        h3 {
+            color: #1a2b4d; /* Navy blue */
             margin-top: 40px;
             text-align: center;
         }
@@ -38,7 +39,7 @@
             flex-direction: column;
         }
         .recipe-card h3 {
-            color: #6610f2;
+            color: #343a40; /* Dark gray for recipe names */
             margin-top: 0;
         }
         .recipe-card p {
@@ -81,7 +82,10 @@
             list-style: none;
             padding: 0;
         }
+        /* Adjusted existing li style for flexbox */
         .grocery-list-container li {
+            display: flex;
+            align-items: center;
             padding: 5px 0;
             border-bottom: 1px dashed #eee;
         }
@@ -208,7 +212,7 @@
 
         /* Styles for grocery list categories */
         .grocery-category h3 {
-            color: #4CAF50;
+            color: #343a40; /* Dark gray for grocery category titles */
             border-bottom: 1px dashed #ddd;
             padding-bottom: 5px;
             margin-top: 20px;
@@ -216,7 +220,7 @@
             text-align: left;
         }
 
-        /* NEW ENHANCED STYLES FOR GROCERY ITEM REMOVAL */
+        /* Styles for "already have at home" removal */
         .grocery-item-removable {
             cursor: pointer;
             transition: all 0.3s ease-out;
@@ -224,18 +228,71 @@
             padding: 5px 0;
         }
         .grocery-item-removable:hover {
-            background-color: #ffe6e6; /* A very light red tint on hover for "delete" feel */
-            color: #666; /* Slightly darker grey */
-            text-decoration: line-through; /* Keep this */
-            text-decoration-thickness: 2px; /* Make strikethrough thicker (modern browsers) */
-            text-decoration-color: #dc3545; /* Red strikethrough */
-            transform: translateX(5px); /* Slight movement to indicate interactivity */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1); /* Subtle shadow on hover */
+            background-color: #ffe6e6;
+            color: #666;
+            text-decoration: line-through;
+            text-decoration-thickness: 2px;
+            text-decoration-color: #dc3545;
+            transform: translateX(5px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* NEW STYLES FOR CHECKBOXES & "PICKED UP" STATE */
+        .grocery-item-checkbox {
+            margin-right: 10px;
+            min-width: 18px;
+            min-height: 18px;
+            cursor: pointer;
+        }
+
+        .grocery-item-checked {
+            text-decoration: line-through;
+            color: #999;
+            font-style: italic;
+            opacity: 0.7;
+            transition: all 0.3s ease-out;
+        }
+        /* NEW STYLES FOR NUMBER OF DAYS SELECTOR */
+        .generate-recipes-container {
+            text-align: center;
+            margin: 30px 0 50px; /* More space below */
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: inline-block; /* To center it */
+        }
+        .generate-recipes-container label {
+            font-weight: bold;
+            margin-right: 10px;
+            color: #343a40; /* Dark gray */
+        }
+        .generate-recipes-container select {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+            margin-right: 15px;
+        }
+        .generate-recipes-container button {
+            /* Inherits generate-button styles, good! */
+            padding: 10px 20px;
         }
     </style>
 </head>
 <body>
     <h1>Your Weekly Healthy Dinner Ideas</h1>
+    <div class="generate-recipes-container">
+        <label for="numDaysSelect">Show recipes for:</label>
+        <select id="numDaysSelect">
+            <option value="7">7 Days</option>
+            <option value="6">6 Days</option>
+            <option value="5">5 Days</option>
+            <option value="4">4 Days</option>
+            <option value="3">3 Days</option>
+        </select>
+        <button id="generateNewRecipesBtn" class="generate-button">Generate Recipes</button>
+    </div>
     <div id="recipe-list">
         <p>Loading your weekly dinner ideas...</p>
     </div>

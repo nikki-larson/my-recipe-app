@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const recipeListDiv = document.getElementById('recipe-list');
     const generateGroceryListBtn = document.getElementById('generate-grocery-list-btn');
     const groceryListDisplay = document.getElementById('grocery-list-display');
-    // NOTE: groceryItemsUl is no longer directly used for rendering categories
 
     // Elements for the replace recipe form
     const replaceRecipeForm = document.getElementById('replace-recipe-form');
@@ -15,16 +14,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const replaceDaySelect = document.getElementById('replaceDaySelect');
 
     // Elements for ad-hoc item form
-    const addAdHocForm = document.getElementById('add-ad-hoc-form'); // This line gets the form element
+    const addAdHocForm = document.getElementById('add-ad-hoc-form');
     const adHocItemInput = document.getElementById('adHocItemInput');
     const adHocCategorySelect = document.getElementById('adHocCategorySelect');
     const displayAdHocItemsDiv = document.getElementById('display-ad-hoc-items');
+
+    // Elements for number of days selector
+    const numDaysSelect = document.getElementById('numDaysSelect');
+    const generateNewRecipesBtn = document.getElementById('generateNewRecipesBtn');
 
 
     async function fetchWeeklyRecipes() {
         try {
             recipeListDiv.innerHTML = '<p>Loading your weekly dinner ideas...</p>';
-            const response = await fetch('/api/weekly-recipes');
+            // Get the selected number of days from the dropdown
+            const numDays = numDaysSelect.value;
+            // Debug log for numDays on client side
+            console.log('Client: Selected number of days:', numDays); 
+            // Send as query parameter
+            const response = await fetch(`/api/weekly-recipes?days=${numDays}`); 
             const recipes = await response.json();
 
             if (!Array.isArray(recipes) || recipes.length === 0) {
@@ -32,8 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            currentWeeklyRecipes = recipes; // Store the fetched recipes globally
-            renderRecipes(recipes); // Call a new function to render
+            currentWeeklyRecipes = recipes;
+            renderRecipes(recipes);
             
         } catch (error) {
             console.error('Error fetching recipes:', error);
@@ -42,9 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderRecipes(recipesToRender) {
-        recipeListDiv.innerHTML = ''; // Clear loading message and existing recipes
+        recipeListDiv.innerHTML = '';
 
-        const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        // Display correct number of days based on actual recipes fetched
+        const daysOfWeek = ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Day 7']; 
 
         recipesToRender.forEach((recipe, index) => {
             const day = daysOfWeek[index % daysOfWeek.length];
@@ -61,21 +70,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Function to render ad-hoc items
     function renderAdHocItems() {
-        displayAdHocItemsDiv.innerHTML = ''; // Clear existing display
+        displayAdHocItemsDiv.innerHTML = '';
         if (adHocGroceryItems.length === 0) {
             displayAdHocItemsDiv.innerHTML = '<p>No extra items added yet.</p>';
             return;
         }
 
         const ul = document.createElement('ul');
-        adHocGroceryItems.forEach((item, index) => { // 'item' is now { name: '...', category: '...' }
+        adHocGroceryItems.forEach((item, index) => {
             const li = document.createElement('li');
             const span = document.createElement('span');
             span.className = 'ad-hoc-item-display';
-            span.textContent = `${item.name} (${item.category})`; // Display name and category
-            span.dataset.index = index; // Store index for potential removal
+            span.textContent = `${item.name} (${item.category})`;
+            span.dataset.index = index;
 
             li.appendChild(span);
             ul.appendChild(li);
@@ -88,27 +96,25 @@ document.addEventListener('DOMContentLoaded', () => {
             groceryListDisplay.innerHTML = '<h2>Your Weekly Grocery List</h2><p>Generating list...</p>';
             groceryListDisplay.style.display = 'block';
 
-            // Send both currentWeeklyRecipes and adHocGroceryItems to the server
             const response = await fetch('/api/grocery-list', {
-                method: 'POST', // Server-side expects a POST request now
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     recipes: currentWeeklyRecipes,
-                    adHocItems: adHocGroceryItems // Include ad-hoc items as array of objects
+                    adHocItems: adHocGroceryItems
                 })
             });
             const groceryList = await response.json();
 
-            // Re-render the grocery list display area with categories
             groceryListDisplay.innerHTML = '<h2>Your Weekly Grocery List</h2>';
 
             let hasContent = false;
             for (const category in groceryList) {
                 const items = groceryList[category];
                 if (Array.isArray(items) && items.length > 0) {
-                    hasContent = true; // Mark that we have content to display
+                    hasContent = true;
                     const categoryDiv = document.createElement('div');
                     categoryDiv.className = 'grocery-category';
 
@@ -119,8 +125,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     const ul = document.createElement('ul');
                     items.forEach(item => {
                         const listItem = document.createElement('li');
-                        listItem.textContent = item;
-                        listItem.classList.add('grocery-item-removable'); // NEW: Add this class!
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.classList.add('grocery-item-checkbox');
+                        
+                        checkbox.addEventListener('change', (e) => {
+                            if (e.target.checked) {
+                                listItem.classList.add('grocery-item-checked');
+                            } else {
+                                listItem.classList.remove('grocery-item-checked');
+                            }
+                            e.stopPropagation();
+                        });
+
+                        listItem.appendChild(checkbox);
+                        const itemTextNode = document.createTextNode(item);
+                        listItem.appendChild(itemTextNode);
+                        listItem.classList.add('grocery-item-removable'); 
                         ul.appendChild(listItem);
                     });
                     categoryDiv.appendChild(ul);
@@ -128,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            if (!hasContent) { // If no categories had items
+            if (!hasContent) {
                  groceryListDisplay.innerHTML += '<p>No ingredients found for this week.</p>';
             }
 
@@ -139,58 +160,53 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to handle recipe replacement
     function handleRecipeReplacement(event) {
-        event.preventDefault(); // Prevent the form from reloading the page
+        event.preventDefault();
 
         const newRecipeTitle = newRecipeTitleInput.value;
         const newRecipeIngredients = newRecipeIngredientsInput.value;
         const newRecipeLink = newRecipeLinkInput.value;
-        const replaceIndex = parseInt(replaceDaySelect.value); // Get the index (0-6) of the day to replace
+        const replaceIndex = parseInt(replaceDaySelect.value);
 
-        // Basic validation
         if (!newRecipeTitle || !newRecipeIngredients || !newRecipeLink) {
             alert('Please fill in all fields for the new recipe.');
             return;
         }
 
-        // Convert comma-separated ingredients string to an array, trim whitespace
         const ingredientsArray = newRecipeIngredients.split(',').map(item => item.trim());
 
-        // Create a new recipe object (assign a temporary ID)
         const newRecipe = {
-            id: Date.now(), // Unique ID based on timestamp
+            id: Date.now(),
             name: newRecipeTitle,
             ingredients: ingredientsArray,
             link: newRecipeLink
         };
 
-        // Replace the recipe in our local array
         if (replaceIndex >= 0 && replaceIndex < currentWeeklyRecipes.length) {
-            currentWeeklyRecipes[replaceIndex] = newRecipe;
-            const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']; // Define here for alert
-            renderRecipes(currentWeeklyRecipes); // Re-render the recipes to show the change
-            alert(`Successfully replaced recipe for ${daysOfWeek[replaceIndex]}!`);
-
-            // Optionally, clear the form
+            if (replaceIndex < currentWeeklyRecipes.length) { // Ensure within bounds of current recipes
+                currentWeeklyRecipes[replaceIndex] = newRecipe;
+                const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+                renderRecipes(currentWeeklyRecipes);
+                alert(`Successfully replaced recipe for ${daysOfWeek[replaceIndex]}!`);
+            } else {
+                alert('Cannot replace a day beyond the current number of recipes displayed.');
+            }
             replaceRecipeForm.reset();
         } else {
             alert('Invalid day selected for replacement.');
         }
     }
 
-    // Function to handle adding ad-hoc items
     function handleAddAdHocItem(event) {
-        event.preventDefault(); // Prevent form submission (page reload)
+        event.preventDefault();
 
         const itemText = adHocItemInput.value.trim();
-        const itemCategory = adHocCategorySelect.value; // Get selected category
+        const itemCategory = adHocCategorySelect.value;
 
         if (itemText) {
-            // Store item as an object with its name and category
             adHocGroceryItems.push({ name: itemText, category: itemCategory });
-            renderAdHocItems(); // Update the displayed list of ad-hoc items
-            adHocItemInput.value = ''; // Clear the input field
+            renderAdHocItems();
+            adHocItemInput.value = '';
         }
     }
 
@@ -198,17 +214,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Event Listeners
     generateGroceryListBtn.addEventListener('click', fetchGroceryList);
     replaceRecipeForm.addEventListener('submit', handleRecipeReplacement);
-    addAdHocForm.addEventListener('submit', handleAddAdHocItem); // Listen for ad-hoc form submission
-
-    // NEW: Event Listener for grocery item deletion (using event delegation)
+    addAdHocForm.addEventListener('submit', handleAddAdHocItem);
     groceryListDisplay.addEventListener('click', (event) => {
-        // Check if the clicked element has the 'grocery-item-removable' class
-        if (event.target.classList.contains('grocery-item-removable')) {
-            event.target.remove(); // Remove the clicked list item from the DOM
+        if (event.target.classList.contains('grocery-item-removable') && event.target.tagName !== 'INPUT') {
+            event.target.remove();
         }
     });
 
+    // NEW: Event listener for Generate Recipes button
+    generateNewRecipesBtn.addEventListener('click', fetchWeeklyRecipes);
+
     // Initial fetch of recipes when the page loads
     fetchWeeklyRecipes();
-    renderAdHocItems(); // Call this to ensure ad-hoc list is rendered even if empty initially
+    renderAdHocItems();
 });
